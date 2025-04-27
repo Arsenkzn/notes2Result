@@ -2,13 +2,7 @@ import { useReducer } from "react";
 import { BrowserRouter } from "react-router-dom";
 import { AppProviders } from "./providers";
 import AppRoutes from "./routes";
-
-type AppState = {
-  user: string | null;
-  notes: string[];
-  loading: boolean;
-  selectedNoteId: string | null;
-};
+import { Note, AppState, AppAction } from "../entities/note/types";
 
 const initialState: AppState = {
   user: null,
@@ -19,7 +13,7 @@ const initialState: AppState = {
 
 function App() {
   const [state, dispatch] = useReducer(
-    (prev: AppState, action: Partial<AppState> & { type?: string }) => {
+    (prev: AppState, action: AppAction): AppState => {
       switch (action.type) {
         case "SELECT_NOTE":
           return {
