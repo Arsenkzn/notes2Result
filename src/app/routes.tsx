@@ -4,10 +4,14 @@ import { useAppContext } from "./providers";
 import { LoadingOverlay } from "@mantine/core";
 
 const LoginPage = lazy(() =>
-  import("../pages/LoginPage/loginPage").then((m) => ({ default: m.LoginPage }))
+  import("../pages/LoginPage/loginPage").then(
+    (m): { default: React.ComponentType } => ({ default: m.LoginPage })
+  )
 );
 const NotesPage = lazy(() =>
-  import("../pages/NotePage/NotePage").then((m) => ({ default: m.NotesPage }))
+  import("../pages/NotePage/NotePage").then(
+    (m): { default: React.ComponentType } => ({ default: m.NotesPage })
+  )
 );
 
 export default function AppRoutes() {

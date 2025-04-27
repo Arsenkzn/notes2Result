@@ -13,7 +13,7 @@ import { useState, useEffect } from "react";
 import { Note } from "../../../entities/note/types";
 
 export function Sidebar() {
-  const { notes, createNote, selectNote, updateNote, deleteNote } = useNotes();
+  const { notes, createNote, selectNote, updateNote } = useNotes();
   const [localNotes, setLocalNotes] = useState<Note[]>(notes);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [editingNoteId, setEditingNoteId] = useState<string | null>(null);

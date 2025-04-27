@@ -1,9 +1,5 @@
 import { createContext, useContext, useMemo } from "react";
-
-type AppContextType = {
-  state: any;
-  dispatch: React.Dispatch<any>;
-};
+import { AppContextType } from "../entities/note/types";
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
@@ -13,8 +9,8 @@ export function AppProviders({
   dispatch,
 }: {
   children: React.ReactNode;
-  state: any;
-  dispatch: React.Dispatch<any>;
+  state: string;
+  dispatch: React.Dispatch<string>;
 }) {
   const value = useMemo(() => ({ state, dispatch }), [state, dispatch]);
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

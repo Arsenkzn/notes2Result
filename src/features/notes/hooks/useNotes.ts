@@ -4,23 +4,6 @@ import { useAppContext } from "../../../app/providers";
 import { Note } from "../../../entities/note/types";
 import { showNotification } from "@mantine/notifications";
 
-type NoteAction =
-  | { type: "SET_LOADING"; payload: boolean }
-  | { type: "SET_NOTES"; payload: Note[] }
-  | {
-      type: "SET_NOTES_AND_SELECT";
-      payload: { notes: Note[]; selectedNoteId: string };
-    }
-  | { type: "SELECT_NOTE"; selectedNoteId: string; payload: string | null }
-  | {
-      type: "DELETE_NOTE";
-      payload: { notes: Note[]; selectedNoteId: string | null };
-    }
-  | {
-      type: "RESTORE_STATE";
-      payload: { notes: Note[]; selectedNoteId: string | null };
-    };
-
 const notesStore = localforage.createInstance({
   name: "macos-notes",
   storeName: "notes",
@@ -29,10 +12,11 @@ const notesStore = localforage.createInstance({
 interface UseNotesReturn {
   notes: Note[];
   selectedNoteId: string | null;
+  isLoading: boolean;
   createNote: () => Promise<Note>;
   updateNote: (id: string, updates: Partial<Note>) => Promise<void>;
   deleteNote: (id: string) => Promise<boolean>;
-  selectNote: (id: string) => void;
+  selectNote: (id: string | null) => void;
 }
 
 export default function useNotes(): UseNotesReturn {
@@ -40,14 +24,11 @@ export default function useNotes(): UseNotesReturn {
 
   const loadNotes = useCallback(async (): Promise<void> => {
     try {
-      console.log("Loading notes...");
-      dispatch({ loading: true });
-      const notes: Note[] = (await notesStore.getItem<Note[]>("notes")) || [];
-      console.log("Loaded notes:", notes);
-      dispatch({ notes, loading: false });
+      dispatch({ type: "SET_LOADING", payload: true });
+      const notes = (await notesStore.getItem<Note[]>("notes")) || [];
+      dispatch({ type: "SET_NOTES", payload: notes });
     } catch (error) {
-      console.error("Failed to load notes:", error);
-      dispatch({ loading: false });
+      dispatch({ type: "SET_LOADING", payload: false });
       showNotification({
         title: "Error",
         message: "Failed to load notes",
@@ -58,7 +39,7 @@ export default function useNotes(): UseNotesReturn {
 
   const saveNotes = useCallback(async (notes: Note[]): Promise<void> => {
     try {
-      await notesStore.setItem<Note[]>("notes", notes);
+      await notesStore.setItem("notes", notes);
     } catch (error) {
       showNotification({
         title: "Error",
@@ -77,17 +58,10 @@ export default function useNotes(): UseNotesReturn {
       updatedAt: new Date(),
     };
 
-    console.log("Создана заметка (до сохранения):", newNote);
-
     const updatedNotes = [...state.notes, newNote];
     await saveNotes(updatedNotes);
 
-    console.log("Стейт после создания:", {
-      prevNotes: state.notes,
-      updatedNotes,
-    });
-
-    dispatch({
+     dispatch({
       notes: updatedNotes,
       selectedNoteId: newNote.id,
     });

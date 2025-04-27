@@ -2,11 +2,11 @@ import useNotes from "../hooks/useNotes";
 import { MarkdownEditor } from "./MarkdownEditor";
 import { Box, Group, Button, Text, Modal, TextInput } from "@mantine/core";
 import { IconTrash } from "@tabler/icons-react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, KeyboardEvent, ChangeEvent } from "react";
 
 export default function Workspace() {
-  const [deleteModalOpened, setDeleteModalOpened] = useState(false);
-  const [editModalOpened, setEditModalOpened] = useState(false);
+  const [deleteModalOpened, setDeleteModalOpened] = useState<boolean>(false);
+  const [editModalOpened, setEditModalOpened] = useState<boolean>(false);
   const {
     notes,
     selectedNoteId,
@@ -17,13 +17,11 @@ export default function Workspace() {
   } = useNotes();
 
   const selectedNote = notes.find((note) => note.id === selectedNoteId);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [editingTitle, setEditingTitle] = useState("");
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
+  const [editingTitle, setEditingTitle] = useState<string>("");
   const titleInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    console.log("SelectedNoteId in Workspace:", selectedNoteId);
-    console.log("All notes:", notes);
     if (selectedNoteId) {
       const noteExists = notes.some((n) => n.id === selectedNoteId);
       console.log("Note exists:", noteExists);
@@ -38,7 +36,7 @@ export default function Workspace() {
     }
   }, [selectedNoteId, notes]);
 
-  const handleDelete = async () => {
+  const handleDelete = async (): Promise<void> => {
     if (!selectedNote) return;
     setIsDeleting(true);
     try {
@@ -52,17 +50,17 @@ export default function Workspace() {
     }
   };
 
-  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleTitleChange = (e: ChangeEvent<HTMLInputElement>): void => {
     setEditingTitle(e.target.value);
   };
 
-  const handleTitleKeyDown = (e: React.KeyboardEvent) => {
+  const handleTitleKeyDown = (e: KeyboardEvent): void => {
     if (e.key === "Enter") {
       saveTitle();
     }
   };
 
-  const saveTitle = () => {
+  const saveTitle = (): void => {
     if (selectedNote && editingTitle.trim() !== selectedNote.title) {
       updateNote(selectedNote.id, { title: editingTitle.trim() });
     }
@@ -71,7 +69,7 @@ export default function Workspace() {
     }
   };
 
-  const handleSave = () => {
+  const handleSave = (): void => {
     saveTitle();
     setEditModalOpened(false);
     setDeleteModalOpened(false);
@@ -123,8 +121,6 @@ export default function Workspace() {
           backgroundOpacity: 0.55,
           blur: 3,
         }}
-        closeOnClickOutside={!deleteModalOpened}
-        withCloseButton={!deleteModalOpened}
       >
         {!deleteModalOpened ? (
           <>
@@ -132,7 +128,7 @@ export default function Workspace() {
               {selectedNote && (
                 <MarkdownEditor
                   note={selectedNote}
-                  onUpdate={(content) =>
+                  onUpdate={(content: string) =>
                     updateNote(selectedNote.id, { content })
                   }
                 />
