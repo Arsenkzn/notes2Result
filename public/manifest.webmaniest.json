@@ -1,0 +1,9 @@
+{
+    "name": "My Notes App",
+    "short_name": "Notes",
+    "description": "Приложение для заметок",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#ffffff"
+  }

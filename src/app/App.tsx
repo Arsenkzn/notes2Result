@@ -3,6 +3,7 @@ import { BrowserRouter } from "react-router-dom";
 import { AppProviders } from "./providers";
 import AppRoutes from "./routes";
 import { Note, AppState, AppAction } from "../entities/note/types";
+import { appReducer } from "./actions/actions";
 
 const initialState: AppState = {
   user: null,
